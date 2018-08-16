@@ -1,0 +1,2 @@
+# utl_given_8_numbers_form_3_groups_of_any_size_such_that_group_sums_are_as_close_as_possible
+Given 8 numbers form 3 groups of any size such that group sums are as close as possible.  Keywords: sas sql join merge big data analytics macros oracle teradata mysql sas communities stackoverflow statistics artificial inteligence AI Python R Java Javascript WPS Matlab SPSS Scala Perl C C# Excel MS Access JSON graphics maps NLP natural language processing machine learning igraph DOSUBL DOW loop stackoverflow SAS community.
