@@ -1,5 +1,8 @@
 Given 8 numbers form 3 groups of any size such that group sums are as close as possible
 
+see the amazing preferred solution by Muthia on the end
+Muthia Kachirayan <muthia.kachirayan@GMAIL.COM>
+
 github
 https://tinyurl.com/y9z38wu7
 https://github.com/rogerjdeangelis/utl_given_8_numbers_form_3_groups_of_any_size_such_that_group_sums_are_as_close_as_possible
@@ -223,6 +226,100 @@ run;quit;
 
  2548     4     2     2      R1        4
  2548     4     2     2      R2        8   12
+
+
+*__  __       _   _     _
+|  \/  |_   _| |_| |__ (_) __ _
+| |\/| | | | | __| '_ \| |/ _` |
+| |  | | |_| | |_| | | | | (_| |
+|_|  |_|\__,_|\__|_| |_|_|\__,_|
+
+;
+
+ Hi Max,
+
+[1] Here is a Data Step. A random sample of numbers (&nobs) are generated
+and these are assigned to 3 Groups as you wanted. Assume that number of
+numbers are in multiple of 3. These numbers are stored into a _temporary_
+array. The entire numbers are sorted in ascending order. Next consider the
+numbers in three triplets. The first triplet will have values lesser than
+the other two triplets. Assign the last value of the First triplet to First
+Group and the first value to the Third Group. Similarly we do for the
+Second Triplet. The first value of the Last Triplet will go to the First
+Group and the third value goes to the Third Group. This arrangement tries
+to equalize the Sums for each Group. Here is the program:
+
+
+%let ngrp = 3;
+%let nobs = 9;
+data want;
+array k[&nobs] _temporary_ ;
+length sumlist $300;
+if _N_ = 1 then do;
+   call streaminit(123);
+   do i = 1 to &nobs.;
+      u = ceil(rand("uniform") * 99);
+      k[i] = u;
+   end;
+   call sortN(of k[*]);
+end;
+
+array sum[&ngrp] _temporary_;
+   retain j &ngrp.;
+   do i = 1 to dim(k);
+      select(ceil(i/&ngrp));
+         when(1) do;
+            group = j;
+            NUM = k[i];
+            sum[j] + NUM;
+            output;
+            j +- 1;
+            if j = 0 then j = &ngrp;
+         end;
+         when(2) do;
+            group = j;
+            NUM = k[i];
+            sum[j] + NUM;
+            output;
+            j +- 1;
+         end;
+         when(3) do;
+            j ++ 1;
+            group = j;
+            NUM = k[i];
+            sum[j] + NUM;
+            output;
+         end;
+         otherwise;
+      end;
+   end;
+   sumlist = catq('D',',', of sum[*]);
+   put sumlist =;
+keep group NUM;
+run;
+
+The LOG gives the Sums for the 3 Groups.(sumlist=78,78,79)
+
+The Want Data Set is not in sorted order of Group. You may sort it if you
+want to have the individual values for each Group.
+
+proc sort data = want;
+   by group;
+run;
+
+[2] You can increase the &nobs (in multiples of 3).
+[3] Number of groups can be increased. You must increase the WHEN in SELECT
+to match to the requirements. Also introduce codes to adjust the Sums as
+done for the First and Second Triplets here.
+[4] When number of observations are not in multiple of 3, this code is not
+designed for it. A simple way is to take the largest multiple of 3 which
+will leave at most 2 values. Use the code for grouping. After Groups are
+made you can assign the left out values to specific Groups to equalize the
+Sums.
+
+Cheers.
+Muthia Kachirayan
+
 
 
 
